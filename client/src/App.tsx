@@ -13,6 +13,7 @@ import { useGame } from "@/lib/gameContext";
 
 const NotFound = lazy(() => import("@/pages/not-found"));
 const Overview = lazy(() => import("@/pages/Overview"));
+const StrategyViewport3D = lazy(() => import("@/pages/StrategyViewport3D"));
 const Resources = lazy(() => import("@/pages/Resources"));
 const Facilities = lazy(() => import("@/pages/Facilities"));
 const Research = lazy(() => import("@/pages/Research"));
@@ -248,6 +249,7 @@ function RouterContent() {
         <Route path="/threejs-viewer" component={ThreeDViewerPortal} />
         <Route path="/admin-login" component={AdminLogin} />
         <Route path="/" component={Overview} />
+        <Route path="/3d-viewport" component={StrategyViewport3D} />
         <Route path="/about" component={About} />
         <Route path="/forums" component={Forums} />
         <Route path="/terms" component={Terms} />
