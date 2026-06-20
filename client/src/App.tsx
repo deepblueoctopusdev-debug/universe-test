@@ -231,12 +231,12 @@ function RouterContent() {
 
   if (needsSetup) {
     return (
-      <Switch>
-        <Route path="/" component={AccountSetup} />
-        <Route>
-          <Redirect to="/" />
-        </Route>
-      </Switch>
+      <StellarisGameShell>
+        <Switch>
+          <Route path="/" component={AccountSetup} />
+          <Route component={AccountSetup} />
+        </Switch>
+      </StellarisGameShell>
     );
   }
 
