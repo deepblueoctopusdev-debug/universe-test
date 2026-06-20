@@ -62,10 +62,14 @@
   --radius: 0.25rem;
 }
 
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   @apply font-rajdhani antialiased bg-background text-foreground;
   background-color: hsl(var(--background));
-  min-height: 100vh;
 }
 
 html[data-touch-ui="true"] button,

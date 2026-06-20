@@ -7,7 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { GameProvider } from "@/lib/gameContext";
 import GameLogo from "@/components/GameLogo";
 import { useStellarisHotkeys } from "@/hooks/useStellarisHotkeys";
-import { TopMenuBar, GameStatusBar, ViewportPanelSystem } from "@/components/stellaris";
+import { ResourceBar, NavSidebar, GameStatusBar, ViewportPanelSystem, StellarisShellProvider } from "@/components/stellaris";
 
 import { useGame } from "@/lib/gameContext";
 
@@ -100,7 +100,7 @@ const OrbitalDefense = lazy(() => import("@/pages/OrbitalDefense"));
 
 function LoadingSplash() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col items-center justify-center relative overflow-hidden">
+    <div className="h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col items-center justify-center relative overflow-hidden">
       {/* Background stars */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 60 }).map((_, i) => (
@@ -156,23 +156,30 @@ function StellarisGameShell({ children }: { children: React.ReactNode }) {
   
   if (isFullscreenUI) {
     return (
-      <div className="min-h-screen bg-slate-50 relative">
-        <div className="absolute top-2 right-2 z-50 text-[10px] text-slate-400">
-          Press <kbd className="font-mono bg-slate-800 px-1 py-0.5 rounded">Ctrl+F9</kbd> to show UI
+      <StellarisShellProvider value={true}>
+        <div className="h-full bg-slate-50 relative overflow-hidden">
+          <div className="absolute top-2 right-2 z-50 text-[10px] text-slate-400">
+            Press <kbd className="font-mono bg-slate-800 px-1 py-0.5 rounded">Ctrl+F9</kbd> to show UI
+          </div>
+          {children}
         </div>
-        {children}
-      </div>
+      </StellarisShellProvider>
     );
   }
   
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <TopMenuBar />
-      <ViewportPanelSystem>
-        {children}
-      </ViewportPanelSystem>
-      <GameStatusBar />
-    </div>
+    <StellarisShellProvider value={true}>
+      <div className="h-full flex flex-col bg-slate-50 overflow-hidden">
+        <ResourceBar />
+        <div className="flex flex-1 overflow-hidden">
+          <NavSidebar />
+          <ViewportPanelSystem>
+            {children}
+          </ViewportPanelSystem>
+        </div>
+        <GameStatusBar />
+      </div>
+    </StellarisShellProvider>
   );
 }
 

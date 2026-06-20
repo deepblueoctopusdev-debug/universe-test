@@ -3,6 +3,7 @@ import { useGame } from "@/lib/gameContext";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useIsInStellarisShell } from "@/components/stellaris";
 import { OGAMEX_FEATURED_ASSETS, PLANET_ASSETS } from "@shared/config";
 import { Button } from "@/components/ui/button";
 import { SceneLayer, resolveShellScenePreset } from "@/components/views3d";
@@ -919,6 +920,8 @@ function GameSidebar({
 }
 
 export default function GameLayout({ children }: { children: React.ReactNode }) {
+  const inStellarisShell = useIsInStellarisShell();
+
   const [location] = useLocation();
   const {
     resources,
@@ -1190,6 +1193,10 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
     displayPreferences.touchTargetSize,
     touchMode,
   ]);
+
+  if (inStellarisShell) {
+    return <>{children}</>;
+  }
 
   return (
     <div className={cn(
