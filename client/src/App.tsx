@@ -232,14 +232,6 @@ function RouterContent() {
   if (needsSetup) {
     return (
       <Switch>
-        <Route path="/threejs-viewer" component={ThreeDViewerPortal} />
-        <Route path="/admin-login" component={AdminLogin} />
-        <Route path="/admin" component={Admin} />
-        <Route path="/admin/database" component={DatabaseAdmin} />
-        <Route path="/about" component={About} />
-        <Route path="/forums" component={Forums} />
-        <Route path="/terms" component={Terms} />
-        <Route path="/privacy" component={Privacy} />
         <Route path="/" component={AccountSetup} />
         <Route>
           <Redirect to="/" />
