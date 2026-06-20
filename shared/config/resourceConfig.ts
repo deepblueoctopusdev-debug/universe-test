@@ -8,6 +8,55 @@ export const RESOURCE_CONFIG = {
     energy: { name: "Energy", description: "Power generation", category: "production" },
     food: { name: "Food", description: "Agricultural produce", category: "sustenance" },
     water: { name: "Water", description: "Fresh water supplies", category: "sustenance" },
+    credits: { name: "Credits", description: "Standard galactic currency", category: "currency" },
+  },
+
+  // Prime Currency — Dark Matter
+  primeCurrency: {
+    id: "darkmatter",
+    name: "Dark Matter",
+    symbol: "DM",
+    description: "The prime premium currency of the Stellar Dominion universe. Earned through gameplay, achievements, and events. Used for premium upgrades, gacha pulls, speed-ups, cosmetics, and exclusive items.",
+    icon: "🌑",
+    color: "#8b5cf6",
+    gradientFrom: "#7c3aed",
+    gradientTo: "#a855f7",
+    category: "premium",
+    rarity: "mythic",
+    baseValue: 1000,
+    maxStorage: 999999999,
+    earnMethods: [
+      "daily_login", "achievement", "quest", "event", "battle_victory",
+      "exploration", "trade", "alliance", "pvp_reward", "raid_reward",
+      "research_completion", "construction_completion", "salvage",
+      "gacha_conversion", "purchase", "exchange", "season_pass", "daily_quest",
+      "weekly_quest", "monthly_quest", "tutorial", "first_purchase", "login_streak",
+    ],
+    spendMethods: [
+      "gacha_pull", "speed_up", "premium_upgrade", "cosmetic", "commander_recruit",
+      "army_commander_recruit", "exclusive_item", "resource_pack", "expansion",
+      "inventory_slot", "name_change", "server_transfer", "revive", "shield",
+      "boost", "skill_reset", "talent_reset", "mastery_reset", "equipment_enhance",
+      "crafting_accelerate", "research_accelerate", "construction_accelerate",
+      "training_accelerate", "market_fee_waiver", "premium_subscription",
+    ],
+    exchangeRates: {
+      credits: 0.001,
+      gold: 0.01,
+      silver: 0.001,
+      platinum: 0.1,
+      antimatter: 0.5,
+      "void-matter": 2,
+      "celestial-essence": 10,
+    },
+  },
+
+  // Premium resources (Dark Matter is the prime currency)
+  premiumResources: {
+    darkmatter: { name: "Dark Matter", description: "Prime premium currency", icon: "🌑", color: "#8b5cf6", rarity: "mythic" },
+    antimatter: { name: "Antimatter", description: "Exotic energy source", icon: "💥", color: "#ef4444", rarity: "legendary" },
+    "void-matter": { name: "Void Matter", description: "Interdimensional matter", icon: "⭕", color: "#6366f1", rarity: "legendary" },
+    "celestial-essence": { name: "Celestial Essence", description: "Pure cosmic power", icon: "👑", color: "#eab308", rarity: "mythic" },
   },
 
   // Mining equipment
