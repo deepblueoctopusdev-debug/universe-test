@@ -1154,6 +1154,11 @@ export function createSceneController(options) {
     applyPage,
     syncSelection,
     focusSelectedSystem: focusSelection,
+    focusHomeSystem() {
+      // Reset camera to default position (home system / overview)
+      controls.target.set(0, 0, 0);
+      camera.position.set(0, 420, 880);
+    },
     setMotionEnabled(enabled) {
       motionEnabled = enabled;
     },

@@ -38,6 +38,14 @@ export function createViewerState(options) {
     hoveredSystem: null,
     selectedSystem: null,
     selectedPlanet: null,
+    // Stellaris-style state
+    speed: 3,
+    isPaused: false,
+    uiHidden: false,
+    outlinerOpen: false,
+    outlinerTab: 0,
+    mapMode: "empire",
+    searchOpen: false,
   };
 
   function emit(previousState) {
@@ -185,6 +193,30 @@ export function createViewerState(options) {
         hoveredSystem: null,
         selectedPlanet: null,
       });
+    },
+
+    // Stellaris-style state methods
+    setActiveMenu(menuId) {
+      update({ activeMenuId: menuId });
+    },
+    setSpeed(speed) {
+      const clamped = Math.max(0, Math.min(6, speed));
+      update({ speed: clamped, isPaused: clamped === 0 });
+    },
+    toggleUI() {
+      update({ uiHidden: !state.uiHidden });
+    },
+    toggleOutliner() {
+      update({ outlinerOpen: !state.outlinerOpen });
+    },
+    setOutlinerTab(tab) {
+      update({ outlinerTab: tab, outlinerOpen: true });
+    },
+    setMapMode(mode) {
+      update({ mapMode: mode });
+    },
+    toggleSearch() {
+      update({ searchOpen: !state.searchOpen });
     },
   };
 }

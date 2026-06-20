@@ -1,11 +1,13 @@
-import { Switch, Route } from "wouter";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Switch, Route, useLocation } from "wouter";
+import { lazy, Suspense, useEffect, useRef, useState, useCallback } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GameProvider } from "@/lib/gameContext";
 import GameLogo from "@/components/GameLogo";
+import { useStellarisHotkeys } from "@/hooks/useStellarisHotkeys";
+import { TopMenuBar, GameStatusBar, ViewportPanelSystem } from "@/components/stellaris";
 
 import { useGame } from "@/lib/gameContext";
 
@@ -137,6 +139,38 @@ function LoadingSplash() {
   );
 }
 
+function StellarisGameShell({ children }: { children: React.ReactNode }) {
+  const [location] = useLocation();
+  const navigate = useCallback((path: string) => {
+    window.location.href = path;
+  }, []);
+  
+  const hotkeyState = useStellarisHotkeys(navigate, location);
+  
+  const isFullscreenUI = hotkeyState.uiHidden;
+  
+  if (isFullscreenUI) {
+    return (
+      <div className="min-h-screen bg-slate-50 relative">
+        <div className="absolute top-2 right-2 z-50 text-[10px] text-slate-400">
+          Press <kbd className="font-mono bg-slate-800 px-1 py-0.5 rounded">Ctrl+F9</kbd> to show UI
+        </div>
+        {children}
+      </div>
+    );
+  }
+  
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <TopMenuBar />
+      <ViewportPanelSystem>
+        {children}
+      </ViewportPanelSystem>
+      <GameStatusBar />
+    </div>
+  );
+}
+
 function RouterContent() {
   const { isLoggedIn, needsSetup, isLoading } = useGame();
   const [showSplash, setShowSplash] = useState(true);
@@ -209,87 +243,89 @@ function RouterContent() {
   }
 
   return (
-    <Switch>
-      <Route path="/threejs-viewer" component={ThreeDViewerPortal} />
-      <Route path="/admin-login" component={AdminLogin} />
-      <Route path="/" component={Overview} />
-      <Route path="/about" component={About} />
-      <Route path="/forums" component={Forums} />
-      <Route path="/terms" component={Terms} />
-      <Route path="/privacy" component={Privacy} />
-      <Route path="/resources" component={Resources} />
-      <Route path="/power-grid" component={PowerGrid} />
-      <Route path="/facilities" component={Facilities} />
-      <Route path="/research" component={Research} />
-      <Route path="/skills" component={Skills} />
-      <Route path="/fitting" component={Fitting} />
-      <Route path="/artifacts" component={Artifacts} />
-      <Route path="/shipyard" component={Shipyard} />
-      <Route path="/fleet" component={Fleet} />
-      <Route path="/army" component={Army} />
-      <Route path="/army-management" component={ArmyManagement} />
-      <Route path="/training-center" component={TrainingCenter} />
-      <Route path="/ground-combat" component={GroundCombat} />
-      <Route path="/civilization-management" component={CivilizationManagement} />
-      <Route path="/interstellar" component={Interstellar} />
-      <Route path="/galaxy" component={Galaxy} />
-      <Route path="/universe" component={Universe} />
-      <Route path="/universe-generator" component={UniverseGenerator} />
-      <Route path="/commander" component={Commander} />
-      <Route path="/government" component={Government} />
-      <Route path="/alliance" component={Alliance} />
-      <Route path="/market" component={Market} />
-      <Route path="/messages" component={Messages} />
-      <Route path="/combat" component={Combat} />
-      <Route path="/orbital-defense" component={OrbitalDefense} />
-      <Route path="/battle-logs" component={BattleLogs} />
-      <Route path="/exploration" component={Exploration} />
-      <Route path="/colonies" component={Colonies} />
-      <Route path="/tech-tree" component={TechTree} />
-      <Route path="/technology-tree" component={TechnologyTree} />
-      <Route path="/expeditions" component={Expeditions} />
-      <Route path="/blueprints" component={Blueprints} />
-      <Route path="/megastructures" component={MegaStructures} />
-      <Route path="/achievements" component={Achievements} />
-      <Route path="/factions" component={Factions} />
-      <Route path="/empire-progression" component={EmpireProgression} />
-      <Route path="/warp-network" component={WarpNetwork} />
-      <Route path="/stations" component={Stations} />
-      <Route path="/merchants" component={Merchants} />
-      <Route path="/storefront" component={Storefront} />
-      <Route path="/celestial-browser" component={CelestialBrowser} />
-      <Route path="/biome-codex" component={BiomeCodex} />
-      <Route path="/biome/:id" component={BiomeDetail} />
-      <Route path="/diagnostics" component={Diagnostics} />
-      <Route path="/story-mode" component={StoryMode} />
-      <Route path="/season-pass" component={SeasonPass} />
-      <Route path="/battle-pass" component={BattlePass} />
-      <Route path="/civilization-systems" component={CivilizationSystems} />
-      <Route path="/relics" component={Relics} />
-      <Route path="/friends" component={FriendsList} />
-      <Route path="/guilds" component={Guilds} />
-      <Route path="/raids" component={Raids} />
-      <Route path="/universe-events" component={UniverseEvents} />
-      <Route path="/raid-bosses" component={RaidBosses} />
-      <Route path="/raid-finder" component={RaidFinder} />
-      <Route path="/empire-planets" component={EmpirePlanetViewer} />
-      <Route path="/empire-view" component={EmpireView} />
-      <Route path="/empire-command-center" component={EmpireCommandCenter} />
-      <Route path="/planet/:id" component={PlanetDetail} />
-      <Route path="/planet-command" component={PlanetCommand} />
-      <Route path="/planet-occupation" component={PlanetaryOccupation} />
-      <Route path="/research-lab" component={ResearchLab} />
-      <Route path="/knowledge-library" component={KnowledgeLibrary} />
-      <Route path="/research-analytics" component={ResearchAnalyticsDashboard} />
-      <Route path="/ogame-compendium" component={OgameCompendium} />
-      <Route path="/leaderboard" component={Leaderboard} />
-      <Route path="/assets-gallery" component={GameAssetsGallery} />
-      <Route path="/settings" component={Settings} />
-      <Route path="/admin" component={Admin} />
-      <Route path="/admin/database" component={DatabaseAdmin} />
-      <Route path="/server-console" component={ServerConsole} />
-      <Route component={NotFound} />
-    </Switch>
+    <StellarisGameShell>
+      <Switch>
+        <Route path="/threejs-viewer" component={ThreeDViewerPortal} />
+        <Route path="/admin-login" component={AdminLogin} />
+        <Route path="/" component={Overview} />
+        <Route path="/about" component={About} />
+        <Route path="/forums" component={Forums} />
+        <Route path="/terms" component={Terms} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/resources" component={Resources} />
+        <Route path="/power-grid" component={PowerGrid} />
+        <Route path="/facilities" component={Facilities} />
+        <Route path="/research" component={Research} />
+        <Route path="/skills" component={Skills} />
+        <Route path="/fitting" component={Fitting} />
+        <Route path="/artifacts" component={Artifacts} />
+        <Route path="/shipyard" component={Shipyard} />
+        <Route path="/fleet" component={Fleet} />
+        <Route path="/army" component={Army} />
+        <Route path="/army-management" component={ArmyManagement} />
+        <Route path="/training-center" component={TrainingCenter} />
+        <Route path="/ground-combat" component={GroundCombat} />
+        <Route path="/civilization-management" component={CivilizationManagement} />
+        <Route path="/interstellar" component={Interstellar} />
+        <Route path="/galaxy" component={Galaxy} />
+        <Route path="/universe" component={Universe} />
+        <Route path="/universe-generator" component={UniverseGenerator} />
+        <Route path="/commander" component={Commander} />
+        <Route path="/government" component={Government} />
+        <Route path="/alliance" component={Alliance} />
+        <Route path="/market" component={Market} />
+        <Route path="/messages" component={Messages} />
+        <Route path="/combat" component={Combat} />
+        <Route path="/orbital-defense" component={OrbitalDefense} />
+        <Route path="/battle-logs" component={BattleLogs} />
+        <Route path="/exploration" component={Exploration} />
+        <Route path="/colonies" component={Colonies} />
+        <Route path="/tech-tree" component={TechTree} />
+        <Route path="/technology-tree" component={TechnologyTree} />
+        <Route path="/expeditions" component={Expeditions} />
+        <Route path="/blueprints" component={Blueprints} />
+        <Route path="/megastructures" component={MegaStructures} />
+        <Route path="/achievements" component={Achievements} />
+        <Route path="/factions" component={Factions} />
+        <Route path="/empire-progression" component={EmpireProgression} />
+        <Route path="/warp-network" component={WarpNetwork} />
+        <Route path="/stations" component={Stations} />
+        <Route path="/merchants" component={Merchants} />
+        <Route path="/storefront" component={Storefront} />
+        <Route path="/celestial-browser" component={CelestialBrowser} />
+        <Route path="/biome-codex" component={BiomeCodex} />
+        <Route path="/biome/:id" component={BiomeDetail} />
+        <Route path="/diagnostics" component={Diagnostics} />
+        <Route path="/story-mode" component={StoryMode} />
+        <Route path="/season-pass" component={SeasonPass} />
+        <Route path="/battle-pass" component={BattlePass} />
+        <Route path="/civilization-systems" component={CivilizationSystems} />
+        <Route path="/relics" component={Relics} />
+        <Route path="/friends" component={FriendsList} />
+        <Route path="/guilds" component={Guilds} />
+        <Route path="/raids" component={Raids} />
+        <Route path="/universe-events" component={UniverseEvents} />
+        <Route path="/raid-bosses" component={RaidBosses} />
+        <Route path="/raid-finder" component={RaidFinder} />
+        <Route path="/empire-planets" component={EmpirePlanetViewer} />
+        <Route path="/empire-view" component={EmpireView} />
+        <Route path="/empire-command-center" component={EmpireCommandCenter} />
+        <Route path="/planet/:id" component={PlanetDetail} />
+        <Route path="/planet-command" component={PlanetCommand} />
+        <Route path="/planet-occupation" component={PlanetaryOccupation} />
+        <Route path="/research-lab" component={ResearchLab} />
+        <Route path="/knowledge-library" component={KnowledgeLibrary} />
+        <Route path="/research-analytics" component={ResearchAnalyticsDashboard} />
+        <Route path="/ogame-compendium" component={OgameCompendium} />
+        <Route path="/leaderboard" component={Leaderboard} />
+        <Route path="/assets-gallery" component={GameAssetsGallery} />
+        <Route path="/settings" component={Settings} />
+        <Route path="/admin" component={Admin} />
+        <Route path="/admin/database" component={DatabaseAdmin} />
+        <Route path="/server-console" component={ServerConsole} />
+        <Route component={NotFound} />
+      </Switch>
+    </StellarisGameShell>
   );
 }
 

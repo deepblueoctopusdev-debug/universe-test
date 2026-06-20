@@ -91,11 +91,21 @@ state.subscribe((nextState, previousState) => {
 });
 
 window.addEventListener("keydown", (event) => {
-  if (event.key.toLowerCase() === "r") {
+  const key = event.key.toLowerCase();
+  const ctrl = event.ctrlKey || event.metaKey;
+  const shift = event.shiftKey;
+  const target = event.target;
+  const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+
+  // Don't intercept input fields (except ESC and F-keys)
+  if (isInput && !event.key.startsWith('F') && event.key !== 'Escape') return;
+
+  // Original bindings
+  if (key === "r") {
     state.regenerate();
   }
 
-  if (event.key.toLowerCase() === "f") {
+  if (key === "f" && !ctrl) {
     sceneController.focusSelectedSystem();
   }
 
@@ -111,11 +121,11 @@ window.addEventListener("keydown", (event) => {
     state.setViewMode("planet");
   }
 
-  if (event.key.toLowerCase() === "q") {
+  if (key === "q" && !ctrl) {
     state.cycleShipControlMode(-1);
   }
 
-  if (event.key.toLowerCase() === "e") {
+  if (key === "e" && !ctrl) {
     state.cycleShipControlMode(1);
   }
 
@@ -134,4 +144,102 @@ window.addEventListener("keydown", (event) => {
   if (event.key === ".") {
     state.cyclePage(1);
   }
+
+  // === Stellaris Hotkeys ===
+
+  // ESC - Close menu or open main menu
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    if (state.getState().activeMenuId) {
+      state.setActiveMenu(null);
+    } else {
+      state.setActiveMenu('main-menu');
+    }
+  }
+
+  // F1-F10 - Stellaris navigation menu items
+  const fKeyMap = {
+    'f1': 'empire-overview',
+    'f2': 'situation-log',
+    'f3': 'market',
+    'f4': 'research',
+    'f5': 'fleets',
+    'f6': 'leaders',
+    'f7': 'expansion',
+    'f8': 'factions',
+    'f9': 'contacts',
+    'f10': 'government',
+  };
+
+  if (fKeyMap[event.key.toLowerCase()]) {
+    event.preventDefault();
+    state.setActiveMenu(fKeyMap[event.key.toLowerCase()]);
+  }
+
+  // Space - Pause / Unpause
+  if (event.key === ' ' && !ctrl && !isInput) {
+    event.preventDefault();
+    state.toggleMotion();
+  }
+
+  // +/- - Increase / Decrease game speed
+  if (key === '=' || key === '+') {
+    event.preventDefault();
+    state.setSpeed(Math.min(6, (state.getState().speed || 3) + 1));
+  }
+  if (key === '-' || key === '_') {
+    event.preventDefault();
+    state.setSpeed(Math.max(0, (state.getState().speed || 3) - 1));
+  }
+
+  // Home / Backspace - Go to home system
+  if (key === 'home' || key === 'backspace') {
+    if (!isInput) {
+      event.preventDefault();
+      sceneController.focusHomeSystem();
+    }
+  }
+
+  // O - Toggle outliner
+  if (key === 'o' && !ctrl && !isInput) {
+    event.preventDefault();
+    state.toggleOutliner();
+  }
+
+  // L - Multiplayer chat
+  if (key === 'l' && !ctrl && !isInput) {
+    event.preventDefault();
+    // Open messages/chat panel
+  }
+
+  // M - Toggle galaxy map view
+  if (key === 'm' && !ctrl && !isInput) {
+    event.preventDefault();
+    const currentMode = state.getState().viewMode;
+    state.setViewMode(currentMode === 'galaxy' ? 'system' : 'galaxy');
+  }
+
+  // Ctrl+Z/X/C/V/B - Map modes
+  if (ctrl) {
+    const mapModeMap = {
+      'z': 'empire-map',
+      'x': 'diplomatic-map',
+      'c': 'opinion-map',
+      'v': 'attitude-map',
+      'b': 'neighbor-map',
+    };
+    if (mapModeMap[key]) {
+      event.preventDefault();
+      state.setMapMode(mapModeMap[key]);
+    }
+  }
+
+  // Ctrl+F9 - Hide UI
+  if (ctrl && event.key === 'F9') {
+    event.preventDefault();
+    state.toggleUI();
+  }
+
+  // F11 - Screenshot (browser default)
+  // F12 - Steam overlay (handled by Steam)
 });
