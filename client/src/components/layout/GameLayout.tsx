@@ -1053,7 +1053,7 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
     mobileOptimized: playerOptions?.display?.mobileOptimized ?? true,
     touchControls: playerOptions?.display?.touchControls ?? true,
     touchTargetSize: playerOptions?.display?.touchTargetSize ?? "comfortable",
-    browserWidth: playerOptions?.display?.browserWidth ?? "standard",
+    browserWidth: playerOptions?.display?.browserWidth ?? "full",
     stickyMobileBars: playerOptions?.display?.stickyMobileBars ?? true,
   };
 

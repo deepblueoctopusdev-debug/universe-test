@@ -334,10 +334,12 @@ const EXTRA_SIDEBAR_ITEMS: SidebarCategory[] = [
       {
         title: "Maps",
         items: [
+          { key: "galaxy-map-center", label: "Galaxy Map Center", href: "/galaxy-maps" },
           { key: "galaxy-map", label: "Galaxy Map", href: "/galaxy" },
           { key: "universe", label: "Universe View", href: "/universe" },
           { key: "universe-gen", label: "Universe Generator", href: "/universe-generator" },
           { key: "universe-map-browser", label: "Map Browser", href: "/universe-map" },
+          { key: "sol-system", label: "Sol System 3D", href: "/sol-system" },
         ],
       },
       {

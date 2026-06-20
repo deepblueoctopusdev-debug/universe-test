@@ -8,6 +8,7 @@ import { GameProvider } from "@/lib/gameContext";
 import GameLogo from "@/components/GameLogo";
 import { useStellarisHotkeys } from "@/hooks/useStellarisHotkeys";
 import { ResourceBar, NavSidebar, GameStatusBar, ViewportPanelSystem, StellarisShellProvider } from "@/components/stellaris";
+import { PageSubmenu } from "@/components/stellaris/PageSubmenu";
 
 import { useGame } from "@/lib/gameContext";
 
@@ -26,6 +27,8 @@ const Universe = lazy(() => import("@/pages/Universe"));
 const UniverseView3D = lazy(() => import("@/pages/UniverseView3D"));
 const UniverseGenerator = lazy(() => import("@/pages/UniverseGenerator"));
 const UniverseMapBrowser = lazy(() => import("@/pages/UniverseMapBrowser"));
+const SolSystem3D = lazy(() => import("@/pages/SolSystem3D"));
+const GalaxyMapCenter = lazy(() => import("@/pages/GalaxyMapCenter"));
 const Commander = lazy(() => import("@/pages/Commander"));
 const Government = lazy(() => import("@/pages/Government"));
 const Settings = lazy(() => import("@/pages/Settings"));
@@ -98,6 +101,7 @@ const ThreeDViewerPortal = lazy(() => import("@/pages/ThreeDViewerPortal"));
 const DatabaseAdmin = lazy(() => import("@/pages/DatabaseAdmin"));
 const PowerGrid = lazy(() => import("@/pages/PowerGrid"));
 const OrbitalDefense = lazy(() => import("@/pages/OrbitalDefense"));
+const UniverseClusterView = lazy(() => import("@/pages/UniverseClusterView"));
 
 function LoadingSplash() {
   return (
@@ -174,9 +178,12 @@ function StellarisGameShell({ children }: { children: React.ReactNode }) {
         <ResourceBar />
         <div className="flex flex-1 overflow-hidden">
           <NavSidebar />
-          <ViewportPanelSystem>
-            {children}
-          </ViewportPanelSystem>
+          <div className="flex-1 min-w-0 h-full overflow-hidden flex flex-col">
+            <PageSubmenu />
+            <ViewportPanelSystem>
+              {children}
+            </ViewportPanelSystem>
+          </div>
         </div>
         <GameStatusBar />
       </div>
@@ -289,6 +296,9 @@ function RouterContent() {
         <Route path="/universe-3d" component={UniverseView3D} />
         <Route path="/universe-generator" component={UniverseGenerator} />
         <Route path="/universe-map" component={UniverseMapBrowser} />
+        <Route path="/sol-system" component={SolSystem3D} />
+        <Route path="/galaxy-maps" component={GalaxyMapCenter} />
+        <Route path="/universe-cluster" component={UniverseClusterView} />
         <Route path="/commander" component={Commander} />
         <Route path="/government" component={Government} />
         <Route path="/alliance" component={Alliance} />
