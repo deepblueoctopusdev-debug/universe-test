@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route, useLocation, Redirect } from "wouter";
 import { lazy, Suspense, useEffect, useRef, useState, useCallback } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -23,6 +23,7 @@ const Shipyard = lazy(() => import("@/pages/Shipyard"));
 const Fleet = lazy(() => import("@/pages/Fleet"));
 const Galaxy = lazy(() => import("@/pages/Galaxy"));
 const Universe = lazy(() => import("@/pages/Universe"));
+const UniverseView3D = lazy(() => import("@/pages/UniverseView3D"));
 const UniverseGenerator = lazy(() => import("@/pages/UniverseGenerator"));
 const Commander = lazy(() => import("@/pages/Commander"));
 const Government = lazy(() => import("@/pages/Government"));
@@ -42,6 +43,7 @@ const AccountSetup = lazy(() => import("@/pages/AccountSetup"));
 const Terms = lazy(() => import("@/pages/Terms"));
 const Privacy = lazy(() => import("@/pages/Privacy"));
 const Forums = lazy(() => import("@/pages/Forums"));
+const RealmSaveSelect = lazy(() => import("@/pages/RealmSaveSelect"));
 const ServerConsole = lazy(() => import("@/pages/ServerConsole"));
 const Exploration = lazy(() => import("@/pages/Exploration"));
 const Colonies = lazy(() => import("@/pages/Colonies"));
@@ -173,7 +175,7 @@ function StellarisGameShell({ children }: { children: React.ReactNode }) {
 }
 
 function RouterContent() {
-  const { isLoggedIn, needsSetup, isLoading } = useGame();
+  const { isLoggedIn, needsSetup, needsRealmSelect, isLoading } = useGame();
   const [showSplash, setShowSplash] = useState(true);
   const loadingStartedAtRef = useRef<number | null>(null);
 
@@ -238,8 +240,19 @@ function RouterContent() {
         <Route path="/forums" component={Forums} />
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
-        <Route component={AccountSetup} />
+        <Route path="/" component={AccountSetup} />
+        <Route>
+          <Redirect to="/" />
+        </Route>
       </Switch>
+    );
+  }
+
+  if (needsRealmSelect) {
+    return (
+      <Suspense fallback={<LoadingSplash />}>
+        <RealmSaveSelect />
+      </Suspense>
     );
   }
 
@@ -271,6 +284,7 @@ function RouterContent() {
         <Route path="/interstellar" component={Interstellar} />
         <Route path="/galaxy" component={Galaxy} />
         <Route path="/universe" component={Universe} />
+        <Route path="/universe-3d" component={UniverseView3D} />
         <Route path="/universe-generator" component={UniverseGenerator} />
         <Route path="/commander" component={Commander} />
         <Route path="/government" component={Government} />

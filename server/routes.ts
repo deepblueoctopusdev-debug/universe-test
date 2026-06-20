@@ -80,6 +80,13 @@ export function registerRoutes(app: any) {
         'commander', 'government', 'resources', 'buildings', 'units',
         'currentPlanetId', 'currentSystemId', 'storyProgress',
         'settings', 'tutorialCompleted', 'selectedFaction',
+        'planetName', 'coordinates', 'empireSlot', 'setupComplete',
+        'orbitalBuildings', 'research', 'megastructures', 'artifacts',
+        'cronJobs', 'events', 'queue', 'activeMissions', 'messages',
+        'alliance', 'inventory', 'totalTurns', 'currentTurns',
+        'refinerySystems', 'infrastructureSystems', 'technologySystems',
+        'kardashevSystems', 'megastructureSystems', 'technologyDivisionSystems',
+        'researchTreeSystems', 'shipyardCategorySystems', 'starshipLineSystems',
       ];
 
       const updates: Record<string, any> = {};
