@@ -337,6 +337,7 @@ const EXTRA_SIDEBAR_ITEMS: SidebarCategory[] = [
           { key: "galaxy-map", label: "Galaxy Map", href: "/galaxy" },
           { key: "universe", label: "Universe View", href: "/universe" },
           { key: "universe-gen", label: "Universe Generator", href: "/universe-generator" },
+          { key: "universe-map-browser", label: "Map Browser", href: "/universe-map" },
         ],
       },
       {
