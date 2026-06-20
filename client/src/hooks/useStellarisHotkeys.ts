@@ -55,16 +55,16 @@ export function useStellarisHotkeyState(): StellarisHotkeyState {
 }
 
 const TOP_BAR_MENUS: Record<string, string> = {
-  'f1': 'empire-overview',
-  'f2': 'situation-log',
+  'f1': 'empire',
+  'f2': 'situation',
   'f3': 'market',
   'f4': 'research',
-  'f5': 'fleets',
+  'f5': 'military',
   'f6': 'leaders',
   'f7': 'expansion',
-  'f8': 'factions',
-  'f9': 'contacts',
-  'f10': 'government',
+  'f8': 'diplomacy',
+  'f9': 'galaxy',
+  'f10': 'society',
 };
 
 const PANEL_KEYS: Record<string, string> = {

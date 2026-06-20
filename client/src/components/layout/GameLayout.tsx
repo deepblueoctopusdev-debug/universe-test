@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { OGAMEX_FEATURED_ASSETS, PLANET_ASSETS } from "@shared/config";
 import { Button } from "@/components/ui/button";
 import { SceneLayer, resolveShellScenePreset } from "@/components/views3d";
+import { Viewport3DOverlay } from "@/components/layout/Viewport3DOverlay";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -42,6 +43,7 @@ import {
   Map,
   Building2,
   Sparkles,
+  Crosshair,
   CircleDot,
   GraduationCap,
   Compass,
@@ -315,186 +317,64 @@ const CollapsibleMenu = ({
 const menuSections: MenuSection[] = [
   {
     title: "Empire",
-    icon: Building2,
-    description: "Manage planets, colonies, infrastructure, and civilization growth.",
+    icon: LayoutDashboard,
+    description: "Empire overview, resources, and management [F1]",
     groups: [
       {
-        title: "Command",
+        title: "Overview",
         description: "Core empire oversight and planetary command tools.",
         items: [
-          { href: "/empire-command-center", icon: Crown, label: "Command Center", description: "Review empire status, strategic alerts, and central command tools." },
           { href: "/empire-view", icon: LayoutDashboard, label: "Empire View", description: "See your empire at a glance across worlds and systems." },
           { href: "/empire-planets", icon: Globe, label: "Empire Planets", description: "Browse controlled planets and inspect planet detail pages.", activePrefixes: ["/planet/"] },
-          { href: "/planet-command", icon: Rocket, label: "Planet Command", description: "Issue direct orders for planetary production and control." },
+          { href: "/empire-command-center", icon: Crown, label: "Command Center", description: "Review empire status, strategic alerts, and central command tools." },
+          { href: "/empire-progression", icon: Award, label: "Progression", description: "Track empire advancement through long-term progression tiers." },
         ],
       },
       {
-        title: "Infrastructure",
+        title: "Production",
         description: "Expand production chains and build out planetary capacity.",
         items: [
           { href: "/resources", icon: Pickaxe, label: "Resources", description: "Track and improve metal, crystal, energy, and strategic reserves." },
-          { href: "/power-grid", icon: Network, label: "Stellar Power Grid", description: "Generate, transmit, store, and autonomously route power across worlds and resource fields." },
+          { href: "/power-grid", icon: Network, label: "Power Grid", description: "Generate, transmit, store, and autonomously route power across worlds and resource fields." },
           { href: "/facilities", icon: Factory, label: "Facilities", description: "Construct and upgrade industrial, research, and support facilities." },
-          { href: "/colonies", icon: Home, label: "Colonies", description: "Manage colonization targets, colony slots, and expansion plans." },
           { href: "/stations", icon: Satellite, label: "Stations", description: "Control orbital stations, outposts, and support platforms." },
+          { href: "/colonies", icon: Home, label: "Colonies", description: "Manage colonization targets, colony slots, and expansion plans." },
           { href: "/megastructures", icon: CircleDot, label: "Megastructures", description: "Develop late-game empire-scale construction projects." },
         ],
       },
-      {
-        title: "Civilization",
-        description: "Shape society progression and large-scale empire milestones.",
-        items: [
-          { href: "/civilization-systems", icon: Users, label: "Civilization Systems", description: "Review your civilization systems, bonuses, and societal traits." },
-          { href: "/civilization-management", icon: Building2, label: "Civilization Mgmt", description: "Adjust policies and manage civilization-wide development." },
-          { href: "/empire-progression", icon: Award, label: "Kardashev Scale", description: "Track empire advancement through long-term progression tiers." },
-        ],
-      },
     ],
   },
   {
-    title: "Research",
-    icon: FlaskConical,
-    description: "Unlock technologies, manage labs, and catalog discoveries.",
+    title: "Situation Log",
+    icon: AlertTriangle,
+    description: "Active events, anomalies, and empire focus [F2]",
     groups: [
       {
-        title: "Labs",
-        description: "Operate research centers and queue scientific projects.",
+        title: "Log",
+        description: "Active events and narrative content.",
         items: [
-          { href: "/research", icon: FlaskConical, label: "Research Hub", description: "View current research priorities and laboratory output." },
-          { href: "/skills", icon: BookOpen, label: "Skills Training", description: "Train character skills for improved performance." },
-          { href: "/research-lab", icon: Zap, label: "Research Management", description: "Allocate research capacity and manage active development." },
-          { href: "/research-analytics", icon: ScrollText, label: "Research Analytics", description: "Track discovery streaks, tier spread, and science performance." },
+          { href: "/universe-events", icon: AlertTriangle, label: "Events", description: "Review active world events and their empire-wide impact." },
+          { href: "/story-mode", icon: BookOpen, label: "Story Mode", description: "Play through narrative content and guided mission arcs." },
         ],
       },
       {
-        title: "Tech Trees",
-        description: "Navigate structured technology paths and reference systems.",
+        title: "Achievements",
+        description: "Milestones and progression tracking.",
         items: [
-          { href: "/technology-tree", icon: GraduationCap, label: "Technology Tree", description: "Browse upgrade dependencies and long-term tech routes." },
-          { href: "/tech-tree", icon: FlaskConical, label: "Tech Tree Legacy", description: "Open the alternate tech tree route and keep the legacy page linked into navigation." },
-          { href: "/ogame-compendium", icon: Database, label: "OGame Compendium", description: "Reference structured technology, economy, and combat data." },
-        ],
-      },
-      {
-        title: "Discoveries",
-        description: "Catalog rare finds, advanced designs, and recovered relics.",
-        items: [
-          { href: "/blueprints", icon: FileText, label: "Blueprints", description: "Review unlocked designs and production-ready schematics." },
-          { href: "/artifacts", icon: Hexagon, label: "Artifacts", description: "Inspect rare artifacts that modify empire capabilities." },
           { href: "/relics", icon: Gem, label: "Relics", description: "Manage relic bonuses and rare discovery effects." },
-          { href: "/knowledge-library", icon: BookOpen, label: "Knowledge Library", description: "Study mastery tracks, class tiers, and cross-discipline synergies." },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Military",
-    icon: Swords,
-    description: "Command fleets, armies, expeditions, and combat operations.",
-    groups: [
-      {
-        title: "Forces",
-        description: "Build and organize space and ground units.",
-        items: [
-          { href: "/shipyard", icon: Rocket, label: "Shipyard", description: "Construct ships and prepare new fleets for deployment." },
-          { href: "/fitting", icon: Settings, label: "Ship Fitting", description: "Customize ship modules, weapons, and equipment." },
-          { href: "/fleet", icon: Send, label: "Fleet Command", description: "Dispatch fleets, track missions, and manage formations." },
-          { href: "/orbital-defense", icon: Satellite, label: "Orbital Defense", description: "Build and command offensive satellites, shield platforms, carriers, and orbital fortresses." },
-          { href: "/army", icon: Users, label: "Army", description: "Review land units, formations, and force composition." },
-          { href: "/army-management", icon: Swords, label: "Army Management", description: "Train, equip, and reorganize planetary armies." },
-          { href: "/training-center", icon: GraduationCap, label: "Training Center", description: "Unlock training tracks, staff academies, and manage force capacity." },
-        ],
-      },
-      {
-        title: "Operations",
-        description: "Run missions, battles, and after-action reviews.",
-        items: [
-          { href: "/expeditions", icon: Compass, label: "Expeditions", description: "Launch deep-space missions for risk, reward, and discovery." },
-          { href: "/combat", icon: ShieldAlert, label: "Combat Center", description: "Engage combat systems and active battle mechanics." },
-          { href: "/ground-combat", icon: Swords, label: "Ground Combat", description: "Assemble invasion troops, shock units, and special ops detachments." },
-          { href: "/planet-occupation", icon: TowerControl, label: "Planet Occupation", description: "Control captured worlds through garrisons, suppression, extraction, and fortifications." },
-          { href: "/battle-logs", icon: ScrollText, label: "Battle Logs", description: "Review previous engagements and combat outcomes." },
-        ],
-      },
-      {
-        title: "Raids",
-        description: "Coordinate raid loops, target discovery, and boss encounters.",
-        items: [
-          { href: "/raids", icon: Swords, label: "Raid Operations", description: "Coordinate raid entry points and active raid campaigns." },
-          { href: "/raid-finder", icon: Search, label: "Raid Finder", description: "Search for available raids and suitable objectives." },
-          { href: "/raid-bosses", icon: Crown, label: "Raid Bosses", description: "Track elite raid bosses and encounter preparation." },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Exploration",
-    icon: Map,
-    description: "Survey space, navigate networks, and discover new worlds.",
-    groups: [
-      {
-        title: "Maps",
-        description: "Navigate local, galactic, and generated universe views.",
-        items: [
-          { href: "/interstellar", icon: Sparkles, label: "Interstellar", description: "Explore broader interstellar travel and system links." },
-          { href: "/galaxy", icon: Globe, label: "Galaxy Map", description: "Browse sector positions, neighbors, and route planning." },
-          { href: "/universe", icon: Orbit, label: "Universe View", description: "Inspect the full universe and long-range spatial context." },
-          { href: "/universe-generator", icon: RefreshCw, label: "Universe Generator", description: "Generate and inspect procedural universe structures." },
-        ],
-      },
-      {
-        title: "Discovery",
-        description: "Search celestial bodies, biomes, and transit systems.",
-        items: [
-          { href: "/exploration", icon: Compass, label: "Exploration", description: "Run exploration loops and reveal frontier opportunities." },
-          { href: "/warp-network", icon: Network, label: "Warp Network", description: "Manage travel corridors and inter-system movement." },
-          { href: "/celestial-browser", icon: CircleDot, label: "Celestial Browser", description: "Inspect stars, planets, and other celestial objects." },
-          { href: "/biome-codex", icon: BookOpen, label: "Biome Codex", description: "Study biome entries and their detailed environmental data.", activePrefixes: ["/biome/"] },
-        ],
-      },
-      {
-        title: "Events",
-        description: "Respond to live universe activity and dynamic world events.",
-        items: [
-          { href: "/universe-events", icon: AlertTriangle, label: "Universe Events", description: "Review active world events and their empire-wide impact." },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Diplomacy",
-    icon: Shield,
-    description: "Lead your people, manage alliances, and build social networks.",
-    groups: [
-      {
-        title: "Leadership",
-        description: "Manage identity, power structures, and ranking systems.",
-        items: [
-          { href: "/commander", icon: User, label: "Commander", description: "Customize commander identity, stats, and personal progression." },
-          { href: "/government", icon: Landmark, label: "Government", description: "Review state structure, laws, and governing bonuses." },
-          { href: "/factions", icon: Users, label: "Factions", description: "Navigate faction relations and influence networks." },
+          { href: "/achievements", icon: Trophy, label: "Achievements", description: "Track unlocks, milestones, and earned achievement rewards." },
           { href: "/leaderboard", icon: Trophy, label: "Leaderboard", description: "Compare empire performance against other players." },
         ],
       },
-      {
-        title: "Alliances",
-        description: "Coordinate communication, guilds, and allied diplomacy.",
-        items: [
-          { href: "/alliance", icon: Shield, label: "Alliance", description: "Manage alliance structure, members, and cooperative play." },
-          { href: "/guilds", icon: Crown, label: "Guilds", description: "Organize guild participation and long-term group identity." },
-          { href: "/friends", icon: Users, label: "Friends", description: "Track friends, contacts, and cooperative player lists." },
-          { href: "/messages", icon: Mail, label: "Messages", description: "Read diplomatic, social, and operational communications." },
-        ],
-      },
     ],
   },
   {
-    title: "Economy",
+    title: "Market",
     icon: ShoppingBag,
-    description: "Trade resources, pursue rewards, and progress through game modes.",
+    description: "Trade resources and market operations [F3]",
     groups: [
       {
-        title: "Trade",
+        title: "Commerce",
         description: "Buy, sell, and browse goods across the empire economy.",
         items: [
           { href: "/market", icon: ShoppingBag, label: "Market", description: "Trade raw materials, strategic goods, and market offers." },
@@ -502,14 +382,198 @@ const menuSections: MenuSection[] = [
           { href: "/storefront", icon: Store, label: "Storefront", description: "Browse premium or featured storefront offerings." },
         ],
       },
+    ],
+  },
+  {
+    title: "Research",
+    icon: FlaskConical,
+    description: "Technology and research management [F4]",
+    groups: [
       {
-        title: "Progression",
-        description: "Advance through achievements, passes, and narrative content.",
+        title: "Research",
+        description: "Operate research centers and queue scientific projects.",
         items: [
-          { href: "/achievements", icon: Trophy, label: "Achievements", description: "Track unlocks, milestones, and earned achievement rewards." },
+          { href: "/research", icon: FlaskConical, label: "Research Hub", description: "View current research priorities and laboratory output." },
+          { href: "/research-lab", icon: Zap, label: "Research Lab", description: "Allocate research capacity and manage active development." },
+          { href: "/research-analytics", icon: ScrollText, label: "Analytics", description: "Track discovery streaks, tier spread, and science performance." },
+          { href: "/skills", icon: BookOpen, label: "Skills Training", description: "Train character skills for improved performance." },
+        ],
+      },
+      {
+        title: "Technology",
+        description: "Navigate structured technology paths and reference systems.",
+        items: [
+          { href: "/technology-tree", icon: GraduationCap, label: "Technology Tree", description: "Browse upgrade dependencies and long-term tech routes." },
+          { href: "/tech-tree", icon: FlaskConical, label: "Tech Tree Legacy", description: "Open the alternate tech tree route and keep the legacy page linked into navigation." },
+          { href: "/blueprints", icon: FileText, label: "Blueprints", description: "Review unlocked designs and production-ready schematics." },
+          { href: "/artifacts", icon: Hexagon, label: "Artifacts", description: "Inspect rare artifacts that modify empire capabilities." },
+          { href: "/knowledge-library", icon: BookOpen, label: "Knowledge Library", description: "Study mastery tracks, class tiers, and cross-discipline synergies." },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Military",
+    icon: Crosshair,
+    description: "Fleet command, combat, and military operations [F5]",
+    groups: [
+      {
+        title: "Fleets",
+        description: "Build and organize space fleets.",
+        items: [
+          { href: "/fleet", icon: Send, label: "Fleet Command", description: "Dispatch fleets, track missions, and manage formations." },
+          { href: "/shipyard", icon: Rocket, label: "Shipyard", description: "Construct ships and prepare new fleets for deployment." },
+          { href: "/fitting", icon: Settings, label: "Ship Fitting", description: "Customize ship modules, weapons, and equipment." },
+        ],
+      },
+      {
+        title: "Combat",
+        description: "Run missions, battles, and after-action reviews.",
+        items: [
+          { href: "/combat", icon: ShieldAlert, label: "Combat Center", description: "Engage combat systems and active battle mechanics." },
+          { href: "/orbital-defense", icon: Satellite, label: "Orbital Defense", description: "Build and command offensive satellites, shield platforms, carriers, and orbital fortresses." },
+          { href: "/battle-logs", icon: ScrollText, label: "Battle Logs", description: "Review previous engagements and combat outcomes." },
+        ],
+      },
+      {
+        title: "Ground Forces",
+        description: "Build and organize ground units.",
+        items: [
+          { href: "/army", icon: Users, label: "Army", description: "Review land units, formations, and force composition." },
+          { href: "/army-management", icon: Swords, label: "Army Management", description: "Train, equip, and reorganize planetary armies." },
+          { href: "/training-center", icon: GraduationCap, label: "Training Center", description: "Unlock training tracks, staff academies, and manage force capacity." },
+          { href: "/ground-combat", icon: Swords, label: "Ground Combat", description: "Assemble invasion troops, shock units, and special ops detachments." },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Leaders",
+    icon: Users,
+    description: "Commanders, governors, and leaders [F6]",
+    groups: [
+      {
+        title: "Command",
+        description: "Manage identity, stats, and personal progression.",
+        items: [
+          { href: "/commander", icon: User, label: "Commander", description: "Customize commander identity, stats, and personal progression." },
+          { href: "/skills", icon: BookOpen, label: "Skills", description: "Train character skills for improved performance." },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Expansion",
+    icon: Compass,
+    description: "Colonies, exploration, and territorial expansion [F7]",
+    groups: [
+      {
+        title: "Colonies",
+        description: "Manage colonization and planetary command.",
+        items: [
+          { href: "/colonies", icon: Home, label: "Colonies", description: "Manage colonization targets, colony slots, and expansion plans." },
+          { href: "/planet-command", icon: Rocket, label: "Planet Command", description: "Issue direct orders for planetary production and control." },
+        ],
+      },
+      {
+        title: "Exploration",
+        description: "Survey space and discover new worlds.",
+        items: [
+          { href: "/exploration", icon: Compass, label: "Exploration", description: "Run exploration loops and reveal frontier opportunities." },
+          { href: "/expeditions", icon: Compass, label: "Expeditions", description: "Launch deep-space missions for risk, reward, and discovery." },
+          { href: "/warp-network", icon: Network, label: "Warp Network", description: "Manage travel corridors and inter-system movement." },
+          { href: "/interstellar", icon: Sparkles, label: "Interstellar", description: "Explore broader interstellar travel and system links." },
+        ],
+      },
+      {
+        title: "Construction",
+        description: "Late-game construction and celestial browsing.",
+        items: [
+          { href: "/megastructures", icon: CircleDot, label: "Megastructures", description: "Develop late-game empire-scale construction projects." },
+          { href: "/celestial-browser", icon: CircleDot, label: "Celestial Browser", description: "Inspect stars, planets, and other celestial objects." },
+          { href: "/biome-codex", icon: BookOpen, label: "Biome Codex", description: "Study biome entries and their detailed environmental data.", activePrefixes: ["/biome/"] },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Diplomacy",
+    icon: Shield,
+    description: "Alliance, factions, and diplomatic relations [F8]",
+    groups: [
+      {
+        title: "Diplomacy",
+        description: "Manage identity, power structures, and ranking systems.",
+        items: [
+          { href: "/government", icon: Landmark, label: "Government", description: "Review state structure, laws, and governing bonuses." },
+          { href: "/alliance", icon: Shield, label: "Alliance", description: "Manage alliance structure, members, and cooperative play." },
+          { href: "/factions", icon: Users, label: "Factions", description: "Navigate faction relations and influence networks." },
+        ],
+      },
+      {
+        title: "Communications",
+        description: "Coordinate communication and social networks.",
+        items: [
+          { href: "/messages", icon: Mail, label: "Messages", description: "Read diplomatic, social, and operational communications." },
+          { href: "/friends", icon: Users, label: "Friends List", description: "Track friends, contacts, and cooperative player lists." },
+          { href: "/forums", icon: ScrollText, label: "Forums", description: "Open community discussions and support channels." },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Galaxy",
+    icon: Globe,
+    description: "Galaxy map, universe view, and celestial navigation [F9]",
+    groups: [
+      {
+        title: "Maps",
+        description: "Navigate local, galactic, and generated universe views.",
+        items: [
+          { href: "/galaxy", icon: Globe, label: "Galaxy Map", description: "Browse sector positions, neighbors, and route planning." },
+          { href: "/universe", icon: Orbit, label: "Universe View", description: "Inspect the full universe and long-range spatial context." },
+          { href: "/universe-generator", icon: RefreshCw, label: "Universe Generator", description: "Generate and inspect procedural universe structures." },
+        ],
+      },
+      {
+        title: "3D Views",
+        description: "Interactive 3D strategy views.",
+        items: [
+          { href: "/3d-viewport", icon: Globe, label: "3D Viewport", description: "Open the interactive galaxy strategy map." },
+          { href: "/threejs-viewer", icon: Globe, label: "Three.js Viewer", description: "Open the Three.js galaxy viewer portal." },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Society",
+    icon: Building2,
+    description: "Civilizations, guilds, raids, and social systems [F10]",
+    groups: [
+      {
+        title: "Civilizations",
+        description: "Shape society progression and large-scale empire milestones.",
+        items: [
+          { href: "/civilization-management", icon: Building2, label: "Civilization Mgmt", description: "Adjust policies and manage civilization-wide development." },
+          { href: "/civilization-systems", icon: Users, label: "Civ Systems", description: "Review your civilization systems, bonuses, and societal traits." },
+        ],
+      },
+      {
+        title: "Social",
+        description: "Guilds, raids, and social systems.",
+        items: [
+          { href: "/guilds", icon: Crown, label: "Guilds", description: "Organize guild participation and long-term group identity." },
+          { href: "/raids", icon: Swords, label: "Raids", description: "Coordinate raid entry points and active raid campaigns." },
+          { href: "/raid-bosses", icon: Crown, label: "Raid Bosses", description: "Track elite raid bosses and encounter preparation." },
+          { href: "/raid-finder", icon: Search, label: "Raid Finder", description: "Search for available raids and suitable objectives." },
+        ],
+      },
+      {
+        title: "Seasons",
+        description: "Time-limited progression and battle passes.",
+        items: [
           { href: "/season-pass", icon: Award, label: "Season Pass", description: "Review seasonal objectives and time-limited progression rewards." },
           { href: "/battle-pass", icon: Swords, label: "Battle Pass", description: "Advance combat-focused progression tracks and rewards." },
-          { href: "/story-mode", icon: BookOpen, label: "Story Mode", description: "Play through narrative content and guided mission arcs." },
         ],
       },
     ],
@@ -1681,6 +1745,8 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
           <span>Time: {buildTime}</span>
         </div>
       </footer>
+
+      <Viewport3DOverlay />
 
       <Dialog open={showPatchNotes} onOpenChange={setShowPatchNotes}>
         <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto border-slate-300 bg-white">

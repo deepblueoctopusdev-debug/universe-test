@@ -43,7 +43,6 @@ const AccountSetup = lazy(() => import("@/pages/AccountSetup"));
 const Terms = lazy(() => import("@/pages/Terms"));
 const Privacy = lazy(() => import("@/pages/Privacy"));
 const Forums = lazy(() => import("@/pages/Forums"));
-const RealmSaveSelect = lazy(() => import("@/pages/RealmSaveSelect"));
 const ServerConsole = lazy(() => import("@/pages/ServerConsole"));
 const Exploration = lazy(() => import("@/pages/Exploration"));
 const Colonies = lazy(() => import("@/pages/Colonies"));
@@ -79,6 +78,9 @@ const Raids = lazy(() => import("@/pages/Raids"));
 const UniverseEvents = lazy(() => import("@/pages/UniverseEvents"));
 const RaidBosses = lazy(() => import("@/pages/RaidBosses"));
 const RaidFinder = lazy(() => import("@/pages/RaidFinder"));
+const ColonyManagement = lazy(() => import("@/pages/ColonyManagement"));
+const ResourceRefinery = lazy(() => import("@/pages/ResourceRefinery"));
+const PlanetaryDefense = lazy(() => import("@/pages/PlanetaryDefense"));
 const EmpirePlanetViewer = lazy(() => import("@/pages/EmpirePlanetViewer"));
 const EmpireView = lazy(() => import("@/pages/EmpireView"));
 const EmpireCommandCenter = lazy(() => import("@/pages/EmpireCommandCenter"));
@@ -175,7 +177,7 @@ function StellarisGameShell({ children }: { children: React.ReactNode }) {
 }
 
 function RouterContent() {
-  const { isLoggedIn, needsSetup, needsRealmSelect, isLoading } = useGame();
+  const { isLoggedIn, needsSetup, isLoading } = useGame();
   const [showSplash, setShowSplash] = useState(true);
   const loadingStartedAtRef = useRef<number | null>(null);
 
@@ -231,20 +233,20 @@ function RouterContent() {
 
   if (needsSetup) {
     return (
-      <StellarisGameShell>
-        <Switch>
-          <Route path="/" component={AccountSetup} />
-          <Route component={AccountSetup} />
-        </Switch>
-      </StellarisGameShell>
-    );
-  }
-
-  if (needsRealmSelect) {
-    return (
-      <Suspense fallback={<LoadingSplash />}>
-        <RealmSaveSelect />
-      </Suspense>
+      <Switch>
+        <Route path="/threejs-viewer" component={ThreeDViewerPortal} />
+        <Route path="/admin-login" component={AdminLogin} />
+        <Route path="/admin" component={Admin} />
+        <Route path="/admin/database" component={DatabaseAdmin} />
+        <Route path="/about" component={About} />
+        <Route path="/forums" component={Forums} />
+        <Route path="/terms" component={Terms} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/" component={AccountSetup} />
+        <Route>
+          <Redirect to="/" />
+        </Route>
+      </Switch>
     );
   }
 
@@ -315,6 +317,9 @@ function RouterContent() {
         <Route path="/universe-events" component={UniverseEvents} />
         <Route path="/raid-bosses" component={RaidBosses} />
         <Route path="/raid-finder" component={RaidFinder} />
+        <Route path="/colony-management" component={ColonyManagement} />
+        <Route path="/resource-refinery" component={ResourceRefinery} />
+        <Route path="/planetary-defense" component={PlanetaryDefense} />
         <Route path="/empire-planets" component={EmpirePlanetViewer} />
         <Route path="/empire-view" component={EmpireView} />
         <Route path="/empire-command-center" component={EmpireCommandCenter} />
