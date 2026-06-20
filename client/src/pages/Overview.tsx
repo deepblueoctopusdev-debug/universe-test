@@ -261,7 +261,7 @@ export default function Overview() {
 
   return (
     <GameLayout>
-      <div className="relative w-full h-full overflow-hidden">
+      <div className="relative w-full h-full overflow-y-auto">
         <GalaxyViewport />
 
         {/* Overlay: Command Center Badge */}

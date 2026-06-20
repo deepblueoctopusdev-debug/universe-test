@@ -1195,7 +1195,7 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
   ]);
 
   if (inStellarisShell) {
-    return <>{children}</>;
+    return <div className="h-full w-full overflow-y-auto">{children}</div>;
   }
 
   return (

@@ -477,7 +477,7 @@ export default function SolSystem3D() {
 
   return (
     <GameLayout>
-      <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex flex-col h-full overflow-y-auto">
         <div className="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center">
