@@ -795,14 +795,14 @@ export default function ServerConsole() {
         <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col" style={{ maxHeight: "calc(100vh - 80px)" }}>
 
           {/* Boot lines */}
-          {phase === "boot" && bootLines.map((line) => (
+          {phase === "boot" && bootLines.filter(Boolean).map((line) => (
             <div key={line.id} className={`leading-5 whitespace-pre-wrap break-all ${line.cls ?? "text-green-400"}`}>
               {line.text}
             </div>
           ))}
 
           {/* Terminal lines (after boot) */}
-          {phase !== "boot" && termLines.map((line) => (
+          {phase !== "boot" && termLines.filter(Boolean).map((line) => (
             <div key={line.id} className={`leading-5 whitespace-pre-wrap break-all ${line.cls ?? "text-green-400"}`}>
               {line.text}
             </div>

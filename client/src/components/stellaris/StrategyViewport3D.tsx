@@ -152,7 +152,11 @@ export function StrategyViewport3D() {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const frameRef = useRef<number>(0);
-  const mouseRef = useRef({ x: 0, y: 0, isDragging: false, lastX: 0, lastY: 0 });
+  const mouseRef = useRef({ x: 0, y: 0, isDragging: false, isRightDragging: false, lastX: 0, lastY: 0 });
+  const keysRef = useRef({ w: false, a: false, s: false, d: false, q: false, e: false });
+  const panSpeed = 4;
+  const cameraTargetRef = useRef(new THREE.Vector3(0, 0, 0));
+  const cameraZoomRef = useRef(300);
   const systemsMeshesRef = useRef<Map<string, THREE.Object3D>>(new Map());
   const fleetMeshesRef = useRef<Map<string, THREE.Object3D>>(new Map());
 
@@ -172,6 +176,9 @@ export function StrategyViewport3D() {
 
   const systemsRef = useRef<StarSystem[]>([]);
   const fleetsRef = useRef<Fleet[]>([]);
+
+  useEffect(() => { cameraTargetRef.current = cameraTarget; }, [cameraTarget]);
+  useEffect(() => { cameraZoomRef.current = cameraZoom; }, [cameraZoom]);
 
   useEffect(() => {
     systemsRef.current = generateStarSystems(120);
@@ -330,7 +337,7 @@ export function StrategyViewport3D() {
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
 
-      if (mouseRef.current.isDragging && cameraRef.current) {
+      if (mouseRef.current.isRightDragging && cameraRef.current) {
         const dx = e.clientX - mouseRef.current.lastX;
         const dy = e.clientY - mouseRef.current.lastY;
         mouseRef.current.lastX = e.clientX;
@@ -387,8 +394,9 @@ export function StrategyViewport3D() {
     const handleMouseDown = (e: MouseEvent) => {
       if (e.button === 2) {
         e.preventDefault();
-        setContextMenuPos({ x: e.clientX, y: e.clientY });
-        setShowContextMenu(true);
+        mouseRef.current.isRightDragging = true;
+        mouseRef.current.lastX = e.clientX;
+        mouseRef.current.lastY = e.clientY;
         return;
       }
       mouseRef.current.isDragging = true;
@@ -396,7 +404,10 @@ export function StrategyViewport3D() {
       mouseRef.current.lastY = e.clientY;
     };
 
-    const handleMouseUp = () => {
+    const handleMouseUp = (e: MouseEvent) => {
+      if (e.button === 2) {
+        mouseRef.current.isRightDragging = false;
+      }
       mouseRef.current.isDragging = false;
     };
 
@@ -425,9 +436,11 @@ export function StrategyViewport3D() {
                 setSelectedSystem(sys);
                 setSelectedPlanet(null);
                 setCameraTarget(sys.position.clone());
+                cameraTargetRef.current.copy(sys.position);
                 if (viewMode === "galaxy") {
                   setViewMode("system");
                   setCameraZoom(80);
+                  cameraZoomRef.current = 80;
                 }
               }
               return;
@@ -438,7 +451,11 @@ export function StrategyViewport3D() {
       }
     };
 
-    const handleContextMenu = (e: MouseEvent) => e.preventDefault();
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+      setContextMenuPos({ x: e.clientX, y: e.clientY });
+      setShowContextMenu(true);
+    };
 
     container.addEventListener("mousemove", handleMouseMove);
     container.addEventListener("mousedown", handleMouseDown);
@@ -446,6 +463,85 @@ export function StrategyViewport3D() {
     container.addEventListener("wheel", handleWheel, { passive: false });
     container.addEventListener("click", handleClick);
     container.addEventListener("contextmenu", handleContextMenu);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      if (key === 'w') keysRef.current.w = true;
+      if (key === 'a') keysRef.current.a = true;
+      if (key === 's') keysRef.current.s = true;
+      if (key === 'd') keysRef.current.d = true;
+      if (key === 'q') keysRef.current.q = true;
+      if (key === 'e') keysRef.current.e = true;
+
+      if (key === 'h' && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        const home = systemsRef.current[0];
+        if (home) {
+          setCameraTarget(home.position.clone());
+          cameraTargetRef.current.copy(home.position);
+          setCameraZoom(80);
+          cameraZoomRef.current = 80;
+          setViewMode("system");
+          setSelectedSystem(home);
+        }
+      }
+
+      if (key === 'm' && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        if (viewMode === "galaxy") {
+          setViewMode("system");
+          setCameraZoom(80);
+          cameraZoomRef.current = 80;
+        } else {
+          setViewMode("galaxy");
+          const origin = new THREE.Vector3(0, 0, 0);
+          setCameraTarget(origin);
+          cameraTargetRef.current.copy(origin);
+          setCameraZoom(300);
+          cameraZoomRef.current = 300;
+        }
+      }
+
+      if (key === 'f' && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        const searchInput = document.querySelector('[data-testid="system-search"]') as HTMLInputElement;
+        if (searchInput) searchInput.focus();
+      }
+
+      if (key === ' ' && !e.ctrlKey) {
+        e.preventDefault();
+        setIsPaused(prev => !prev);
+      }
+
+      if (key === 'g' && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+      }
+
+      if (key === 'v' && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+      }
+
+      if (key === 'b' && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+      }
+
+      if (key === 'u' && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      if (key === 'w') keysRef.current.w = false;
+      if (key === 'a') keysRef.current.a = false;
+      if (key === 's') keysRef.current.s = false;
+      if (key === 'd') keysRef.current.d = false;
+      if (key === 'q') keysRef.current.q = false;
+      if (key === 'e') keysRef.current.e = false;
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
 
     let time = 0;
     const animate = () => {
@@ -506,10 +602,41 @@ export function StrategyViewport3D() {
       }
 
       if (cameraRef.current) {
+        const keys = keysRef.current;
+        if (keys.w || keys.a || keys.s || keys.d || keys.q || keys.e) {
+          const forward = new THREE.Vector3();
+          cameraRef.current.getWorldDirection(forward);
+          forward.y = 0;
+          forward.normalize();
+          const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
+
+          const pan = new THREE.Vector3();
+          if (keys.w) pan.add(forward);
+          if (keys.s) pan.sub(forward);
+          if (keys.d) pan.add(right);
+          if (keys.a) pan.sub(right);
+          pan.normalize().multiplyScalar(panSpeed);
+
+          const newTarget = cameraTargetRef.current.clone().add(pan);
+          cameraTargetRef.current.copy(newTarget);
+          setCameraTarget(newTarget);
+        }
+
+        if (keys.q) {
+          const newZoom = Math.min(800, cameraZoomRef.current + 3);
+          cameraZoomRef.current = newZoom;
+          setCameraZoom(newZoom);
+        }
+        if (keys.e) {
+          const newZoom = Math.max(20, cameraZoomRef.current - 3);
+          cameraZoomRef.current = newZoom;
+          setCameraZoom(newZoom);
+        }
+
         const currentPos = cameraRef.current.position;
-        const targetPos = cameraTarget.clone().add(new THREE.Vector3(0, cameraZoom * 0.8, cameraZoom));
+        const targetPos = cameraTargetRef.current.clone().add(new THREE.Vector3(0, cameraZoomRef.current * 0.8, cameraZoomRef.current));
         currentPos.lerp(targetPos, 0.03);
-        cameraRef.current.lookAt(cameraTarget);
+        cameraRef.current.lookAt(cameraTargetRef.current);
       }
 
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
@@ -533,6 +660,8 @@ export function StrategyViewport3D() {
     return () => {
       cancelAnimationFrame(frameRef.current);
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mousedown", handleMouseDown);
       container.removeEventListener("mouseup", handleMouseUp);
@@ -544,13 +673,16 @@ export function StrategyViewport3D() {
         rendererRef.current.dispose();
       }
     };
-  }, [viewMode, isPaused, cameraTarget, cameraZoom]);
+  }, [viewMode, isPaused]);
 
   const handleZoomIn = useCallback(() => setCameraZoom((prev) => Math.max(20, prev - 30)), []);
   const handleZoomOut = useCallback(() => setCameraZoom((prev) => Math.min(800, prev + 30)), []);
   const handleResetCamera = useCallback(() => {
-    setCameraTarget(new THREE.Vector3(0, 0, 0));
+    const origin = new THREE.Vector3(0, 0, 0);
+    setCameraTarget(origin);
+    cameraTargetRef.current.copy(origin);
     setCameraZoom(300);
+    cameraZoomRef.current = 300;
     setViewMode("galaxy");
     setSelectedSystem(null);
     setSelectedPlanet(null);
@@ -560,7 +692,9 @@ export function StrategyViewport3D() {
     setSelectedSystem(system);
     setSelectedPlanet(null);
     setCameraTarget(system.position.clone());
+    cameraTargetRef.current.copy(system.position);
     setCameraZoom(80);
+    cameraZoomRef.current = 80;
     setViewMode("system");
   }, []);
 
@@ -577,8 +711,11 @@ export function StrategyViewport3D() {
             onClick={() => {
               setViewMode(mode);
               if (mode === "galaxy") {
-                setCameraTarget(new THREE.Vector3(0, 0, 0));
+                const origin = new THREE.Vector3(0, 0, 0);
+                setCameraTarget(origin);
+                cameraTargetRef.current.copy(origin);
                 setCameraZoom(300);
+                cameraZoomRef.current = 300;
               }
             }}
             className={cn(
@@ -619,9 +756,11 @@ export function StrategyViewport3D() {
         </div>
         <div className="flex items-center gap-4 text-[11px] text-slate-400">
           <span>WASD: Pan</span>
-          <span>Scroll: Zoom</span>
+          <span>Scroll/Q/E: Zoom</span>
+          <span>Right-drag: Rotate</span>
           <span>Click: Select</span>
-          <span>Right-click: Menu</span>
+          <span>H: Home</span>
+          <span>Space: Pause</span>
         </div>
       </div>
 
@@ -740,14 +879,16 @@ export function StrategyViewport3D() {
       )}
 
       {/* Keyboard shortcuts hint */}
-      <div className="absolute bottom-12 left-3 flex gap-2">
+      <div className="absolute bottom-12 left-3 flex gap-2 flex-wrap">
         {[
-          { key: "1", label: "Galaxy" },
-          { key: "2", label: "System" },
-          { key: "3", label: "Planet" },
+          { key: "WASD", label: "Pan" },
+          { key: "Scroll", label: "Zoom" },
+          { key: "RMB", label: "Rotate" },
+          { key: "Q/E", label: "Zoom in/out" },
+          { key: "H", label: "Home" },
+          { key: "M", label: "Toggle view" },
+          { key: "Space", label: "Pause" },
           { key: "ESC", label: "Back" },
-          { key: "F", label: "Focus" },
-          { key: "R", label: "Reset" },
         ].map((hint) => (
           <div key={hint.key} className="flex items-center gap-1 bg-white/5 backdrop-blur-sm rounded px-2 py-1 border border-white/10">
             <kbd className="text-[9px] font-mono text-primary bg-primary/10 px-1 py-0.5 rounded">{hint.key}</kbd>

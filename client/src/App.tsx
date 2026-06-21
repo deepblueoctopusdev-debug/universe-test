@@ -143,7 +143,7 @@ function LoadingSplash() {
 
       <div className="absolute bottom-6 text-slate-500 text-xs font-mono flex items-center gap-2">
         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-        <span>Alpha <span className="text-blue-400">1.5.0</span> — Live Preview</span>
+        <span>Stellar Dominion <span className="text-blue-400">1.5.0</span> — by Stephen</span>
       </div>
     </div>
   );

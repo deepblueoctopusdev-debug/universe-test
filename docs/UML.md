@@ -1,8 +1,35 @@
 <!-- FILE: UML.md -->
-<!-- STATUS: REWRITTEN | UPDATED: 2026-06-18 -->
+<!-- STATUS: REWRITTEN | UPDATED: 2026-06-20 -->
 # UML Reference - Stellar Dominion
 
 Simplified UML reference for quick navigation.
+
+---
+
+## In-Game UML Viewer
+
+**Route:** `/uml-viewer`
+**Page:** `client/src/pages/UmlDiagramViewer.tsx`
+**API:** `GET /api/uml/diagrams`, `GET /api/uml/diagrams/:id`, `GET /api/uml/categories`, `GET /api/uml/stats`
+**Data:** `shared/config/umlDiagramData.ts`
+
+### Diagram Categories
+
+| Category | Diagrams | Description |
+|----------|----------|-------------|
+| class | Server Engines, Storage & Logger, Service Singletons, Client Game Context | UML class diagrams with properties and methods |
+| sequence | Auth Flow, Combat Simulation, Research Flow | Interaction flows between components |
+| architecture | 5-Layer Architecture | System layer diagram |
+| er | Database ERD (Core) | Entity relationships for 72 tables |
+| dataflow | Request Lifecycle | Browser -> Server -> DB data flow |
+
+### Viewing Diagrams
+
+1. Navigate to `/uml-viewer` in-game
+2. Browse diagrams in the left sidebar, filter by category
+3. Click a class box to highlight it and see details
+4. Use zoom controls (+/-/reset) for large diagrams
+5. Middle-click + drag or Alt+click to pan
 
 ---
 

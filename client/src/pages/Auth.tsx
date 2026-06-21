@@ -817,6 +817,15 @@ export default function Auth() {
             >
               ArkansasIo
             </a>
+            {" | "}
+            <a
+              href="https://github.com/Apocalypsecoder0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-cyan-700 hover:text-cyan-900 hover:underline"
+            >
+              Apocalypsecoder0
+            </a>
           </span>
         </div>
       </div>
